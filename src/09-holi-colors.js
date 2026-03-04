@@ -54,21 +54,71 @@
  *   // red and blue objects are UNCHANGED
  */
 export function mixColors(color1, color2) {
-  // Your code here
+  if (!color1 || !color2) return null;
+  // ensure valid objects with r,g,b
+  const valid = (c) =>
+    c && typeof c.name === 'string' &&
+    typeof c.r === 'number' &&
+    typeof c.g === 'number' &&
+    typeof c.b === 'number';
+  if (!valid(color1) || !valid(color2)) return null;
+  const avg = (a, b) => Math.round((a + b) / 2);
+  return {
+    name: `${color1.name}-${color2.name}`,
+    r: avg(color1.r, color2.r),
+    g: avg(color1.g, color2.g),
+    b: avg(color1.b, color2.b),
+  };
 }
 
 export function adjustBrightness(color, factor) {
-  // Your code here
+  if (!color || typeof factor !== 'number') return null;
+  if (
+    typeof color.r !== 'number' ||
+    typeof color.g !== 'number' ||
+    typeof color.b !== 'number' ||
+    typeof color.name !== 'string'
+  ) {
+    return null;
+  }
+  const clamp = (v) => Math.min(255, Math.max(0, Math.round(v * factor)));
+  return { name: color.name, r: clamp(color.r), g: clamp(color.g), b: clamp(color.b) };
 }
 
 export function addToPalette(palette, color) {
-  // Your code here
+  const isValidColor = c => c && typeof c.name === 'string';
+  if (!Array.isArray(palette)) {
+    return isValidColor(color) ? [color] : [];
+  }
+  const result = [...palette];
+  if (isValidColor(color)) {
+    result.push(color);
+  }
+  return result;
 }
 
 export function removeFromPalette(palette, colorName) {
-  // Your code here
+  if (!Array.isArray(palette)) return [];
+  const result = palette.filter(c => c && c.name !== colorName);
+  return [...result];
 }
 
 export function mergePalettes(palette1, palette2) {
-  // Your code here
+  const p1 = Array.isArray(palette1) ? palette1 : [];
+  const p2 = Array.isArray(palette2) ? palette2 : [];
+  const merged = [];
+  const seen = new Set();
+  p1.forEach(c => {
+    if (c && c.name && !seen.has(c.name)) {
+      merged.push(c);
+      seen.add(c.name);
+    }
+  });
+  p2.forEach(c => {
+    if (c && c.name && !seen.has(c.name)) {
+      merged.push(c);
+      seen.add(c.name);
+    }
+  });
+  return merged;
 }
